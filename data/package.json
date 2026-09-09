@@ -1,0 +1,14 @@
+{
+  "name": "contextrx-seed",
+  "version": "1.0.0",
+  "description": "ContextRx DynamoDB seed script (Node.js)",
+  "main": "seed_dynamodb.js",
+  "scripts": {
+    "seed": "node seed_dynamodb.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/util-dynamodb": "^3.0.0",
+    "dotenv": "^16.0.0"
+  }
+}
