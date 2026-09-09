@@ -14,7 +14,7 @@
 | API | AWS API Gateway (REST) |
 | Compute | AWS Lambda (Python 3.12) |
 | Database | AWS DynamoDB |
-| AI | Google Gemini API (`gemini-2.0-flash`) |
+| AI | Google Gemini API (`gemini-3.7-flash`) |
 
 ---
 

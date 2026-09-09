@@ -2,7 +2,6 @@ import json
 import os
 from decimal import Decimal
 import boto3
-from boto3.dynamodb.conditions import Key
 
 # Initialise DynamoDB
 dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "ap-south-1"))
@@ -18,38 +17,34 @@ def decimal_default(obj):
 
 def lambda_handler(event, context):
     """
-    GET /patients
-    Returns a lightweight list of patients for the selector UI.
-    Does NOT return full records or planted_critical_details.
+    GET /patients/{patient_id}/record
+    Returns the full patient record for the Full Record viewer.
+    Strips planted_critical_details (internal-only).
     """
     try:
         http_method = event.get("httpMethod") or event.get("requestContext", {}).get("http", {}).get("method", "")
         if http_method == "OPTIONS":
             return _response(200, {"status": "ok"})
 
-        result = table.scan(
-            ProjectionExpression="patient_id, demographics"
-        )
-        items = result.get("Items", [])
+        # Extract patient_id from path parameters
+        path_params = event.get("pathParameters") or {}
+        patient_id = (path_params.get("patient_id") or "").strip()
 
-        patients = []
-        for item in items:
-            demo = item.get("demographics", {})
-            patients.append({
-                "patient_id": item["patient_id"],
-                "name": demo.get("name", "Unknown"),
-                "age": demo.get("age", ""),
-                "sex": demo.get("sex", ""),
-                "blood_group": demo.get("blood_group", "")
-            })
+        if not patient_id:
+            return _response(400, {"error": "patient_id is required in path"})
 
-        # Stable sort by patient_id for consistent ordering
-        patients.sort(key=lambda p: p["patient_id"])
+        result = table.get_item(Key={"patient_id": patient_id})
+        patient = result.get("Item")
+        if not patient:
+            return _response(404, {"error": f"Patient '{patient_id}' not found"})
 
-        return _response(200, {"patients": patients})
+        # Exclude internal planted_critical_details from API response
+        safe_record = {k: v for k, v in patient.items() if k != "planted_critical_details"}
+
+        return _response(200, safe_record)
 
     except Exception as e:
-        return _response(500, {"error": "Failed to fetch patients", "detail": str(e)})
+        return _response(500, {"error": "Failed to fetch patient record", "detail": str(e)})
 
 
 def _response(status_code: int, body: dict) -> dict:
