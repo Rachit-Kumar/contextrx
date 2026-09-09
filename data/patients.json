@@ -1,0 +1,522 @@
+[
+  {
+    "patient_id": "patient_001",
+    "demographics": {
+      "name": "Arjun Mehta",
+      "age": 54,
+      "sex": "Male",
+      "dob": "1971-04-12",
+      "blood_group": "B+",
+      "emergency_contact": "Sunita Mehta (spouse) — 9845001234"
+    },
+    "encounters": [
+      {
+        "date": "2021-06-03",
+        "type": "GP Visit",
+        "source_label": "Visit note, 3 Jun 2021",
+        "attending": "Dr. K. Rao",
+        "notes": "Patient presented with seasonal allergic rhinitis. Prescribed loratadine 10mg once daily for 4 weeks. Blood pressure 128/82 — slightly elevated; advised lifestyle modification. No significant findings otherwise. Follow-up in 3 months if symptoms persist."
+      },
+      {
+        "date": "2022-03-14",
+        "type": "GP Visit",
+        "source_label": "Visit note, 14 Mar 2022",
+        "attending": "Dr. K. Rao",
+        "notes": "Patient presented with acute pharyngitis. Initially prescribed Amoxicillin. Patient mentioned, during medication review, that as a child he had been given Penicillin for a throat infection and developed a rash on his torso and itching. No anaphylaxis documented but the reaction was considered consistent with penicillin hypersensitivity. Prescription changed to Azithromycin 500mg Day 1, then 250mg Days 2-5. Patient counselled to inform all treating clinicians of this sensitivity. Previous allergy field in electronic record not previously updated — corrected during this visit."
+      },
+      {
+        "date": "2022-11-08",
+        "type": "Cardiology Referral — Outpatient",
+        "source_label": "Cardiology OPD note, 8 Nov 2022",
+        "attending": "Dr. A. Sharma, Cardiologist",
+        "notes": "Referred by GP for elevated BP readings over past 18 months. ECG normal. 24-hour ambulatory BP monitoring ordered. Patient started on Amlodipine 5mg once daily for hypertension. Advised low-sodium diet and regular aerobic exercise. Lipid panel ordered. Patient denies chest pain, shortness of breath, palpitations."
+      },
+      {
+        "date": "2023-01-20",
+        "type": "Cardiology Follow-up",
+        "source_label": "Cardiology follow-up note, 20 Jan 2023",
+        "attending": "Dr. A. Sharma, Cardiologist",
+        "notes": "Ambulatory BP monitoring result: mean daytime BP 138/88 — mild hypertension confirmed. Lipid panel: Total Cholesterol 214 mg/dL, LDL 138 mg/dL, HDL 42 mg/dL, Triglycerides 180 mg/dL. Amlodipine continued. Added Rosuvastatin 10mg at night. Repeat lipids in 6 months. Patient tolerating medications well. No new complaints."
+      },
+      {
+        "date": "2023-09-05",
+        "type": "GP Visit",
+        "source_label": "Visit note, 5 Sep 2023",
+        "attending": "Dr. K. Rao",
+        "notes": "Routine medication review. Blood pressure 132/84 — improved on Amlodipine. Rosuvastatin continued. Patient reports mild ankle swelling, likely related to Amlodipine — dose unchanged as BP is better controlled. Patient well otherwise. No new symptoms. Advised to continue lifestyle changes."
+      },
+      {
+        "date": "2024-07-22",
+        "type": "Pre-operative Assessment",
+        "source_label": "Pre-op assessment note, 22 Jul 2024",
+        "attending": "Dr. P. Menon, Anaesthesiologist",
+        "notes": "Patient admitted for elective inguinal hernia repair scheduled in 2 days. General health assessment: well-controlled hypertension on Amlodipine 5mg, dyslipidaemia on Rosuvastatin 10mg. No known drug allergies documented in this pre-op form — patient did not mention the penicillin sensitivity during this intake. ASA Physical Status: Class II. Routine bloods ordered. ECG normal. Chest X-ray clear. Fasting instructions given."
+      }
+    ],
+    "medications": [
+      {
+        "name": "Amlodipine 5mg",
+        "start_date": "2022-11-08",
+        "end_date": null,
+        "status": "active",
+        "notes": "For hypertension. Once daily."
+      },
+      {
+        "name": "Rosuvastatin 10mg",
+        "start_date": "2023-01-20",
+        "end_date": null,
+        "status": "active",
+        "notes": "For dyslipidaemia. At night."
+      },
+      {
+        "name": "Loratadine 10mg",
+        "start_date": "2021-06-03",
+        "end_date": "2021-07-03",
+        "status": "discontinued",
+        "notes": "Short course for seasonal allergic rhinitis. Not repeated."
+      }
+    ],
+    "lab_reports": [
+      {
+        "date": "2023-01-15",
+        "source_label": "Lipid Panel, 15 Jan 2023",
+        "tests": [
+          { "test": "Total Cholesterol", "result": "214 mg/dL", "reference": "<200 mg/dL", "flag": "HIGH" },
+          { "test": "LDL Cholesterol", "result": "138 mg/dL", "reference": "<130 mg/dL", "flag": "HIGH" },
+          { "test": "HDL Cholesterol", "result": "42 mg/dL", "reference": ">40 mg/dL", "flag": "NORMAL" },
+          { "test": "Triglycerides", "result": "180 mg/dL", "reference": "<150 mg/dL", "flag": "HIGH" }
+        ]
+      },
+      {
+        "date": "2024-07-22",
+        "source_label": "Pre-op Bloods, 22 Jul 2024",
+        "tests": [
+          { "test": "Haemoglobin", "result": "14.1 g/dL", "reference": "13.0–17.0 g/dL", "flag": "NORMAL" },
+          { "test": "Platelet Count", "result": "210,000/µL", "reference": "150,000–400,000/µL", "flag": "NORMAL" },
+          { "test": "INR", "result": "1.0", "reference": "0.8–1.2", "flag": "NORMAL" },
+          { "test": "Serum Creatinine", "result": "0.9 mg/dL", "reference": "0.7–1.3 mg/dL", "flag": "NORMAL" },
+          { "test": "Blood Glucose (Fasting)", "result": "98 mg/dL", "reference": "<100 mg/dL", "flag": "NORMAL" }
+        ]
+      }
+    ],
+    "planted_critical_details": [
+      "Penicillin hypersensitivity (rash) — documented in Visit note 14 Mar 2022 by Dr. K. Rao. NOT carried forward to pre-op assessment form of 22 Jul 2024. Risk: if beta-lactam antibiotic used perioperatively without checking full history, allergic reaction may occur."
+    ]
+  },
+  {
+    "patient_id": "patient_002",
+    "demographics": {
+      "name": "Priya Sharma",
+      "age": 41,
+      "sex": "Female",
+      "dob": "1984-11-27",
+      "blood_group": "O+",
+      "emergency_contact": "Rahul Sharma (spouse) — 9900112233"
+    },
+    "encounters": [
+      {
+        "date": "2021-09-14",
+        "type": "GP Visit",
+        "source_label": "Visit note, 14 Sep 2021",
+        "attending": "Dr. L. Gupta",
+        "notes": "Patient presented with right calf pain and swelling after a 10-day international trip. Doppler ultrasound ordered urgently. D-dimer elevated at 2.8 µg/mL (reference <0.5). Referred immediately to Emergency Department."
+      },
+      {
+        "date": "2021-09-14",
+        "type": "Emergency Department Visit",
+        "source_label": "ED note, 14 Sep 2021",
+        "attending": "Dr. V. Iyer, Emergency Medicine",
+        "notes": "Doppler ultrasound confirmed right popliteal vein DVT. Patient admitted. Started on low molecular weight heparin (Enoxaparin 60mg SC BD). Warfarin (Coumadin) anticoagulation initiated with bridging. No evidence of pulmonary embolism on CT-PA. Haematology review arranged."
+      },
+      {
+        "date": "2021-10-02",
+        "type": "Haematology OPD",
+        "source_label": "Haematology OPD note, 2 Oct 2021",
+        "attending": "Dr. S. Pillai, Haematologist",
+        "notes": "Thrombophilia screen ordered. Protein C and Protein S within normal limits. Factor V Leiden negative. Decision made to continue Warfarin for minimum 6 months (target INR 2.0–3.0). Patient counselled on dietary interactions (consistent Vitamin K intake), bleeding precautions, and the importance of not taking NSAIDs including ibuprofen while on Warfarin due to additive bleeding risk and GI complications."
+      },
+      {
+        "date": "2022-04-10",
+        "type": "Haematology Follow-up",
+        "source_label": "Haematology follow-up, 10 Apr 2022",
+        "attending": "Dr. S. Pillai, Haematologist",
+        "notes": "Repeat Doppler — right popliteal DVT resolved. Thrombophilia screen: all negative. No identifiable inherited coagulopathy. Clinical decision: DVT was provoked (long-haul travel). Warfarin continued for another 3 months then review for cessation. INR today: 2.4 — within target. Patient tolerating medication well. Reminded again: avoid NSAIDs, aspirin and other antiplatelet/anticoagulant agents without haematologist advice."
+      },
+      {
+        "date": "2022-07-18",
+        "type": "Haematology Follow-up",
+        "source_label": "Haematology follow-up, 18 Jul 2022",
+        "attending": "Dr. S. Pillai, Haematologist",
+        "notes": "After 9 months of anticoagulation, DVT fully resolved, no recurrence. INR 2.6. Decision: Continue Warfarin for additional 6 months given initial clot burden and patient's preference for extended prophylaxis. Review January 2023 for possible cessation. Patient reports no side effects."
+      },
+      {
+        "date": "2023-02-06",
+        "type": "Haematology Follow-up — Warfarin Cessation Review",
+        "source_label": "Haematology follow-up, 6 Feb 2023",
+        "attending": "Dr. S. Pillai, Haematologist",
+        "notes": "15 months post-DVT. No recurrence. Thrombophilia screen negative. Agreed to trial cessation of Warfarin after shared decision-making. Patient informed of signs of recurrence (calf swelling, pain, shortness of breath) and advised to present immediately if any symptoms. Final INR before cessation: 2.5. Warfarin discontinued."
+      },
+      {
+        "date": "2024-01-15",
+        "type": "GP Visit — Urgent",
+        "source_label": "GP visit note, 15 Jan 2024",
+        "attending": "Dr. L. Gupta",
+        "notes": "Patient presented with left leg swelling and pain, worsening over 3 days. Given prior DVT history, Doppler ordered as emergency. Result confirmed: new left femoral vein DVT. Re-started on Warfarin (loading dose) with LMWH bridge. Haematology urgently referred. Patient distressed — second DVT event within 2.5 years."
+      },
+      {
+        "date": "2024-02-20",
+        "type": "Haematology OPD — Second DVT Management",
+        "source_label": "Haematology OPD note, 20 Feb 2024",
+        "attending": "Dr. S. Pillai, Haematologist",
+        "notes": "Repeat thrombophilia screen: Protein C borderline low at 62% (normal 70–140%). Clinical significance uncertain but second unprovoked DVT changes management. Decision: Warfarin long-term (indefinite) anticoagulation. Target INR 2.0–3.0. Monthly INR monitoring. Patient counselled extensively: ABSOLUTELY NO NSAIDS (ibuprofen, naproxen, diclofenac etc.) — these inhibit platelet function AND cause GI mucosal damage, significantly increasing bleeding risk in anticoagulated patients. Dietary Vitamin K consistency reinforced. Patient verbally acknowledged understanding."
+      },
+      {
+        "date": "2025-08-30",
+        "type": "GP Visit — Joint Pain",
+        "source_label": "Visit note, 30 Aug 2025",
+        "attending": "Dr. L. Gupta",
+        "notes": "Patient presented with bilateral knee pain and stiffness, progressive over 6 weeks. Pain scale 6/10. Examination suggests early osteoarthritis. Patient specifically asked whether she can take ibuprofen for pain relief as she has heard it works better than paracetamol. Prescribed paracetamol 500mg up to 4 times daily. Advised physiotherapy referral. Patient seemed dissatisfied with paracetamol recommendation and asked again about ibuprofen — GP reiterated she is on Warfarin and ibuprofen is contraindicated, but noted patient may seek second opinion or self-medicate."
+      }
+    ],
+    "medications": [
+      {
+        "name": "Warfarin (Coumadin)",
+        "start_date": "2024-01-15",
+        "end_date": null,
+        "status": "active",
+        "notes": "Long-term indefinite anticoagulation for recurrent DVT. Target INR 2.0–3.0. Monthly INR monitoring required. NSAID co-administration strictly contraindicated."
+      },
+      {
+        "name": "Paracetamol 500mg",
+        "start_date": "2025-08-30",
+        "end_date": null,
+        "status": "active",
+        "notes": "For knee osteoarthritis pain. Up to 4 times daily."
+      }
+    ],
+    "lab_reports": [
+      {
+        "date": "2025-08-01",
+        "source_label": "INR Check, 1 Aug 2025",
+        "tests": [
+          { "test": "INR", "result": "2.3", "reference": "2.0–3.0 (therapeutic target)", "flag": "NORMAL (therapeutic)" }
+        ]
+      },
+      {
+        "date": "2024-02-18",
+        "source_label": "Thrombophilia Screen, 18 Feb 2024",
+        "tests": [
+          { "test": "Protein C Activity", "result": "62%", "reference": "70–140%", "flag": "LOW (borderline)" },
+          { "test": "Protein S Activity", "result": "74%", "reference": "65–140%", "flag": "NORMAL" },
+          { "test": "Factor V Leiden", "result": "Negative", "reference": "Negative", "flag": "NORMAL" },
+          { "test": "Antithrombin III", "result": "98%", "reference": "80–120%", "flag": "NORMAL" }
+        ]
+      }
+    ],
+    "planted_critical_details": [
+      "Patient is on long-term Warfarin (active, indefinite) for recurrent DVT. She has been asking for and may self-medicate with ibuprofen (NSAID) for knee pain. NSAIDs are strictly contraindicated with Warfarin — risk: serious GI bleeding, supratherapeutic anticoagulation. Last documented in GP visit note 30 Aug 2025."
+    ]
+  },
+  {
+    "patient_id": "patient_003",
+    "demographics": {
+      "name": "Ravi Nair",
+      "age": 62,
+      "sex": "Male",
+      "dob": "1963-08-19",
+      "blood_group": "A+",
+      "emergency_contact": "Lakshmi Nair (spouse) — 9876543210"
+    },
+    "encounters": [
+      {
+        "date": "2021-03-22",
+        "type": "GP Visit — Routine",
+        "source_label": "Visit note, 22 Mar 2021",
+        "attending": "Dr. R. Menon",
+        "notes": "Annual health check. Patient reports fatigue and increased thirst over past 2 months. Fasting blood sugar ordered. BP 142/90. BMI 29.4 (overweight). Advised diet modification and weight loss. Awaiting blood results."
+      },
+      {
+        "date": "2021-04-05",
+        "type": "GP Visit — Follow-up on Labs",
+        "source_label": "Visit note, 5 Apr 2021",
+        "attending": "Dr. R. Menon",
+        "notes": "Fasting blood glucose returned at 182 mg/dL — consistent with diabetes mellitus. HbA1c: 8.4% — elevated. Diagnosis: Type 2 Diabetes Mellitus. Started on Metformin 500mg twice daily with meals. Referred to diabetologist for management. Dietary counselling given. Urine microalbumin ordered to screen for early nephropathy."
+      },
+      {
+        "date": "2021-07-14",
+        "type": "Diabetology OPD",
+        "source_label": "Diabetology OPD note, 14 Jul 2021",
+        "attending": "Dr. B. Krishnan, Diabetologist",
+        "notes": "Patient reviewed. HbA1c 3 months into Metformin: 7.8% — modest improvement. Urine ACR (albumin:creatinine ratio): 42 mg/g — mildly elevated, consistent with early diabetic nephropathy (microalbuminuria). eGFR 71 mL/min/1.73m2 — mildly reduced, CKD Stage 2. Metformin dose increased to 1000mg twice daily. Added Lisinopril 5mg once daily for nephroprotection (ACE inhibitor). Blood pressure now 138/86. Advised strict glycaemic control, sodium restriction, and twice-yearly HbA1c monitoring."
+      },
+      {
+        "date": "2022-02-10",
+        "type": "Diabetology Follow-up",
+        "source_label": "Diabetology follow-up, 10 Feb 2022",
+        "attending": "Dr. B. Krishnan, Diabetologist",
+        "notes": "HbA1c: 7.2% — good improvement. Patient compliant with medications. eGFR stable at 68. BP well controlled on Lisinopril. No hypoglycaemic episodes reported. Encouraged continued adherence. Repeat HbA1c in 6 months. Foot examination normal. Ophthalmology referral for diabetic retinopathy screening arranged."
+      },
+      {
+        "date": "2023-01-30",
+        "type": "Diabetology Follow-up",
+        "source_label": "Diabetology follow-up, 30 Jan 2023",
+        "attending": "Dr. B. Krishnan, Diabetologist",
+        "notes": "HbA1c: 7.6% — slightly worsened from previous visit. Patient admits poor dietary compliance over past 3 months (festival season). eGFR 64 — slight decline. Urine ACR: 68 mg/g — microalbuminuria progressing. Lisinopril dose increased to 10mg. Metformin continued at 1000mg BD. Advised strict compliance. Repeat bloods in 3 months. Patient verbally agreeable."
+      },
+      {
+        "date": "2024-03-18",
+        "type": "Diabetology Follow-up",
+        "source_label": "Diabetology follow-up, 18 Mar 2024",
+        "attending": "Dr. B. Krishnan, Diabetologist",
+        "notes": "HbA1c result from labs (drawn 10 Mar 2024): 11.2% — critically elevated, well above target of <7.0%. eGFR 59 — now CKD Stage 3a (significant decline from 68 two years prior). Urine ACR: 148 mg/g — overt proteinuria developing. Patient admits he stopped Metformin 4 months ago as he was 'feeling fine' and did not come for follow-up. Lisinopril continued. Metformin restarted at reduced dose (500mg BD given CKD). Added Empagliflozin 10mg for cardiorenal protection. Referred to nephrology. URGENT: Informed patient glycaemic control is critical — HbA1c at 11.2% represents high risk of acute complications (DKA, hyperosmolar state, cardiovascular events). Printed referral for nephrology. Follow-up in 4 weeks. Patient acknowledged but did not book nephrology appointment before leaving."
+      }
+    ],
+    "medications": [
+      {
+        "name": "Metformin 500mg BD",
+        "start_date": "2024-03-18",
+        "end_date": null,
+        "status": "active",
+        "notes": "Restarted after 4-month lapse. Reduced dose due to CKD Stage 3a."
+      },
+      {
+        "name": "Lisinopril 10mg",
+        "start_date": "2023-01-30",
+        "end_date": null,
+        "status": "active",
+        "notes": "ACE inhibitor for nephroprotection and hypertension. Once daily."
+      },
+      {
+        "name": "Empagliflozin 10mg",
+        "start_date": "2024-03-18",
+        "end_date": null,
+        "status": "active",
+        "notes": "SGLT2 inhibitor for cardiorenal protection in T2DM + CKD. Once daily."
+      }
+    ],
+    "lab_reports": [
+      {
+        "date": "2024-03-10",
+        "source_label": "Diabetes/Renal Panel, 10 Mar 2024",
+        "tests": [
+          { "test": "HbA1c", "result": "11.2%", "reference": "<7.0% (target for T2DM)", "flag": "CRITICALLY HIGH" },
+          { "test": "Fasting Blood Glucose", "result": "218 mg/dL", "reference": "<100 mg/dL", "flag": "HIGH" },
+          { "test": "eGFR", "result": "59 mL/min/1.73m²", "reference": ">60 (CKD Staging: Stage 3a if 45–59)", "flag": "LOW — CKD Stage 3a" },
+          { "test": "Urine ACR", "result": "148 mg/g", "reference": "<30 mg/g", "flag": "HIGH — overt proteinuria" },
+          { "test": "Serum Creatinine", "result": "1.4 mg/dL", "reference": "0.7–1.3 mg/dL", "flag": "HIGH" }
+        ]
+      },
+      {
+        "date": "2022-02-08",
+        "source_label": "Diabetes Panel, 8 Feb 2022",
+        "tests": [
+          { "test": "HbA1c", "result": "7.2%", "reference": "<7.0%", "flag": "NEAR TARGET" },
+          { "test": "eGFR", "result": "68 mL/min/1.73m²", "reference": ">60", "flag": "NORMAL" }
+        ]
+      }
+    ],
+    "planted_critical_details": [
+      "HbA1c critically elevated at 11.2% (March 2024) — patient self-discontinued Metformin, follow-up for nephrology referral never completed. CKD Stage 3a with worsening proteinuria. Any acute stress (infection, surgery, ER admission) places this patient at high risk of hyperosmolar hyperglycaemic state or DKA. Clinician seeing this patient in ER for chest pain must be aware of uncontrolled diabetes and declining renal function."
+    ]
+  },
+  {
+    "patient_id": "patient_004",
+    "demographics": {
+      "name": "Meena Krishnan",
+      "age": 38,
+      "sex": "Female",
+      "dob": "1987-02-14",
+      "blood_group": "AB-",
+      "emergency_contact": "Suresh Krishnan (spouse) — 9741230987"
+    },
+    "encounters": [
+      {
+        "date": "2020-06-10",
+        "type": "Psychiatry OPD",
+        "source_label": "Psychiatry OPD note, 10 Jun 2020",
+        "attending": "Dr. N. Bhatt, Psychiatrist",
+        "notes": "Patient referred by GP after two episodes of elevated mood, decreased sleep, and impulsive spending, alternating with depressive periods. Diagnosis: Bipolar I Disorder confirmed after structured assessment (SCID). Started on Lithium Carbonate 400mg BD for mood stabilisation. Educated on the importance of consistent hydration, avoiding dehydration, and regular blood level monitoring. Serum Lithium target: 0.6–1.0 mEq/L (acute), 0.4–0.8 mEq/L (maintenance). Thyroid and renal function baseline ordered as Lithium affects both organs over time."
+      },
+      {
+        "date": "2020-09-22",
+        "type": "Psychiatry Follow-up",
+        "source_label": "Psychiatry follow-up, 22 Sep 2020",
+        "attending": "Dr. N. Bhatt, Psychiatrist",
+        "notes": "Patient doing well on Lithium. Mood stable. Serum Lithium 3 months in: 0.72 mEq/L — within therapeutic range. TSH normal. eGFR 88. No side effects reported. Reminded patient: Lithium toxicity risk increases with dehydration, fever, diarrhoea, or if any new medications (especially NSAIDs or ACE inhibitors) are added — these can raise Lithium levels to toxic range. Patient verbally acknowledged."
+      },
+      {
+        "date": "2021-11-04",
+        "type": "GP Visit — Hypertension",
+        "source_label": "Visit note, 4 Nov 2021",
+        "attending": "Dr. M. Das",
+        "notes": "Patient presented for routine check. BP 152/96 on two readings. Patient not previously known to be hypertensive. BMI 27. Lifestyle advice given. Repeat BP in 2 weeks. No mention of current psychiatric medications in this visit note. Bloods ordered."
+      },
+      {
+        "date": "2021-11-22",
+        "type": "GP Visit — Hypertension Follow-up",
+        "source_label": "Visit note, 22 Nov 2021",
+        "attending": "Dr. M. Das",
+        "notes": "Repeat BP: 156/98. Hypertension confirmed. Started Ramipril (ACE inhibitor) 2.5mg once daily. Patient did not disclose she is on Lithium during this consultation — GP did not ask specifically about psychiatric medications. Bloods from 2 weeks ago: renal function normal (eGFR 86, Creatinine 0.8). Follow-up in 6 weeks."
+      },
+      {
+        "date": "2022-05-30",
+        "type": "Psychiatry Follow-up",
+        "source_label": "Psychiatry follow-up, 30 May 2022",
+        "attending": "Dr. N. Bhatt, Psychiatrist",
+        "notes": "Patient reports she was started on an ACE inhibitor (Ramipril) for hypertension 6 months ago by her GP. Serum Lithium level today: 1.08 mEq/L — above previous stable level (was 0.72). Approaching upper range of therapeutic window. ACE inhibitors reduce renal clearance of Lithium, causing levels to rise. Risk of Lithium toxicity if levels continue increasing or if patient becomes dehydrated. Warned patient of toxicity symptoms (tremor, nausea, confusion, ataxia). Advised GP letter (sent today) recommending close Lithium monitoring — monthly serum Lithium levels while on Ramipril. Lithium dose adjusted downward to 300mg BD."
+      },
+      {
+        "date": "2023-03-14",
+        "type": "GP Visit — Routine",
+        "source_label": "Visit note, 14 Mar 2023",
+        "attending": "Dr. M. Das",
+        "notes": "Routine review. BP well controlled on Ramipril — 128/82. GP noted the psychiatry letter from May 2022 regarding Lithium monitoring. Last documented Lithium level was from May 2022 (1.08 mEq/L). Patient asked whether she should get another Lithium level checked. GP said 'yes, we should do that' but the blood form was not issued at this visit. Patient left without a Lithium monitoring order."
+      },
+      {
+        "date": "2025-09-08",
+        "type": "GP Visit — Lethargy and Confusion",
+        "source_label": "Visit note, 8 Sep 2025",
+        "attending": "Dr. M. Das",
+        "notes": "Patient brought in by spouse. Reports 5 days of increasing confusion, hand tremor, nausea, and severe lethargy. Spouse notes she had a gastroenteritis episode 8 days ago with vomiting and poor oral intake — possibly dehydrated. Patient currently on Lithium Carbonate 300mg BD and Ramipril 2.5mg. Last serum Lithium level on record was May 2022 — over 3 years ago. Urgently referred to ED. Suspected Lithium toxicity."
+      }
+    ],
+    "medications": [
+      {
+        "name": "Lithium Carbonate 300mg BD",
+        "start_date": "2022-05-30",
+        "end_date": null,
+        "status": "active",
+        "notes": "For Bipolar I Disorder. Dose reduced from 400mg BD due to elevated levels on concurrent Ramipril. Last serum Lithium monitoring: May 2022 — 1.08 mEq/L. Monitoring has lapsed (no test in over 3 years)."
+      },
+      {
+        "name": "Ramipril 2.5mg",
+        "start_date": "2021-11-22",
+        "end_date": null,
+        "status": "active",
+        "notes": "ACE inhibitor for hypertension. Known to reduce renal clearance of Lithium — concurrent use requires close Lithium level monitoring. Psychiatry letter issued May 2022 flagging this interaction."
+      }
+    ],
+    "lab_reports": [
+      {
+        "date": "2022-05-28",
+        "source_label": "Serum Lithium Level, 28 May 2022",
+        "tests": [
+          { "test": "Serum Lithium", "result": "1.08 mEq/L", "reference": "0.4–0.8 mEq/L (maintenance)", "flag": "HIGH — above maintenance target" }
+        ]
+      },
+      {
+        "date": "2021-11-08",
+        "source_label": "Renal and Metabolic Panel, 8 Nov 2021",
+        "tests": [
+          { "test": "eGFR", "result": "86 mL/min/1.73m²", "reference": ">60", "flag": "NORMAL" },
+          { "test": "Serum Creatinine", "result": "0.8 mg/dL", "reference": "0.5–1.1 mg/dL", "flag": "NORMAL" },
+          { "test": "Serum Sodium", "result": "139 mEq/L", "reference": "136–145 mEq/L", "flag": "NORMAL" }
+        ]
+      }
+    ],
+    "planted_critical_details": [
+      "Patient is on concurrent Lithium + Ramipril (ACE inhibitor). ACE inhibitors reduce Lithium renal clearance, raising serum Lithium levels. This interaction was flagged by psychiatrist in May 2022 with a recommendation for monthly Lithium monitoring. However, Lithium levels have NOT been checked since May 2022 (over 3 years). Recent gastroenteritis with dehydration is a major Lithium toxicity precipitant. Current presentation of confusion, tremor, nausea, lethargy is consistent with Lithium toxicity. Critical: serum Lithium level must be drawn urgently."
+    ]
+  },
+  {
+    "patient_id": "patient_005",
+    "demographics": {
+      "name": "Sanjay Patel",
+      "age": 67,
+      "sex": "Male",
+      "dob": "1958-12-05",
+      "blood_group": "B+",
+      "emergency_contact": "Hina Patel (spouse) — 9550078899"
+    },
+    "encounters": [
+      {
+        "date": "2020-02-18",
+        "type": "Emergency Department Visit — DVT",
+        "source_label": "ED note, 18 Feb 2020",
+        "attending": "Dr. C. Shah, Emergency Medicine",
+        "notes": "Patient presented with left lower limb swelling, redness and pain — 4 days duration. Doppler ultrasound: extensive left femoral and popliteal DVT confirmed. Patient had been on a 16-hour international flight 5 days prior. Anticoagulation started: LMWH bridge to Warfarin. Admitted for 3 days."
+      },
+      {
+        "date": "2020-03-10",
+        "type": "Haematology OPD — Post-DVT",
+        "source_label": "Haematology OPD note, 10 Mar 2020",
+        "attending": "Dr. F. Desai, Haematologist",
+        "notes": "Post-discharge DVT follow-up. INR therapeutic at 2.2. Thrombophilia screen: all negative. DVT classified as provoked (long-haul travel). Plan: Warfarin for 6 months total, then review for cessation. Patient counselled on recognising recurrence symptoms. Note also made that patient's age (61) and extensive DVT make him higher risk for recurrence if exposed to further prolonged immobility (long flights, surgery)."
+      },
+      {
+        "date": "2020-08-25",
+        "type": "Haematology Follow-up — Warfarin Cessation",
+        "source_label": "Haematology follow-up, 25 Aug 2020",
+        "attending": "Dr. F. Desai, Haematologist",
+        "notes": "6 months of anticoagulation completed. Doppler: DVT resolved. No recurrence. Warfarin discontinued. Patient advised: given his age and prior extensive DVT, he carries elevated risk for recurrence with future prolonged immobility or long-haul travel. For any future flights over 6 hours: MUST discuss with doctor before travel to consider prophylactic anticoagulation or compression stockings. Patient verbally acknowledged. Written patient information leaflet given."
+      },
+      {
+        "date": "2022-04-05",
+        "type": "GP Visit — Hypertension Review",
+        "source_label": "Visit note, 5 Apr 2022",
+        "attending": "Dr. T. Varma",
+        "notes": "Routine review. Hypertension managed on Amlodipine 5mg — well controlled at 130/80. Patient is now 63 years old. General health satisfactory. Cholesterol within normal limits on diet alone. No new complaints. Advised annual health checks."
+      },
+      {
+        "date": "2023-10-12",
+        "type": "GP Visit — Knee Pain",
+        "source_label": "Visit note, 12 Oct 2023",
+        "attending": "Dr. T. Varma",
+        "notes": "Patient presented with right knee pain, consistent with early osteoarthritis on examination and X-ray. Prescribed Celecoxib 200mg once daily (COX-2 inhibitor) for pain. Patient's DVT history noted but no consideration documented regarding NSAID use and VTE risk in this note. No haematology consultation documented."
+      },
+      {
+        "date": "2025-09-05",
+        "type": "GP Visit — Travel Clearance",
+        "source_label": "Visit note, 5 Sep 2025",
+        "attending": "Dr. T. Varma",
+        "notes": "Patient requesting travel clearance for an upcoming 14-hour flight to the UK, departing in 3 weeks. Currently on Amlodipine 5mg for hypertension and Celecoxib 200mg for knee pain. GP noted blood pressure well controlled. Did not document DVT history from 2020 in this visit's assessment. Did not prescribe thromboprophylaxis. Clearance provided without addressing VTE risk. Prior haematology note (Aug 2020) explicitly stated patient must discuss with doctor before long-haul travel for prophylaxis consideration."
+      }
+    ],
+    "medications": [
+      {
+        "name": "Amlodipine 5mg",
+        "start_date": "2021-01-01",
+        "end_date": null,
+        "status": "active",
+        "notes": "For hypertension. Once daily. Well controlled."
+      },
+      {
+        "name": "Celecoxib 200mg",
+        "start_date": "2023-10-12",
+        "end_date": null,
+        "status": "active",
+        "notes": "COX-2 inhibitor for knee osteoarthritis. Note: COX-2 inhibitors carry increased VTE risk — potentially relevant given patient's DVT history."
+      },
+      {
+        "name": "Warfarin",
+        "start_date": "2020-02-18",
+        "end_date": "2020-08-25",
+        "status": "discontinued",
+        "notes": "6-month course post-DVT. Discontinued Aug 2020. Not restarted."
+      }
+    ],
+    "lab_reports": [
+      {
+        "date": "2025-08-10",
+        "source_label": "Annual Check Bloods, 10 Aug 2025",
+        "tests": [
+          { "test": "Total Cholesterol", "result": "188 mg/dL", "reference": "<200 mg/dL", "flag": "NORMAL" },
+          { "test": "Fasting Blood Glucose", "result": "96 mg/dL", "reference": "<100 mg/dL", "flag": "NORMAL" },
+          { "test": "eGFR", "result": "72 mL/min/1.73m²", "reference": ">60", "flag": "NORMAL" },
+          { "test": "Haemoglobin", "result": "13.8 g/dL", "reference": "13.0–17.0 g/dL", "flag": "NORMAL" }
+        ]
+      },
+      {
+        "date": "2020-08-20",
+        "source_label": "Final Anticoagulation Bloods, 20 Aug 2020",
+        "tests": [
+          { "test": "INR", "result": "2.4", "reference": "2.0–3.0 (therapeutic)", "flag": "NORMAL (therapeutic)" },
+          { "test": "D-Dimer", "result": "0.38 µg/mL", "reference": "<0.5 µg/mL", "flag": "NORMAL" }
+        ]
+      }
+    ],
+    "planted_critical_details": [
+      "Patient had an extensive left femoral + popliteal DVT in February 2020 (travel-provoked, 16-hour flight). Haematologist explicitly documented in Aug 2020 that this patient must discuss thromboprophylaxis with doctor before any future long-haul flights. Patient now requesting travel clearance for a 14-hour flight. GP's Sep 2025 visit note did not reference DVT history and no thromboprophylaxis was arranged. Additionally, patient is on Celecoxib (COX-2 inhibitor) which itself carries VTE risk, compounding the concern."
+    ]
+  }
+]
