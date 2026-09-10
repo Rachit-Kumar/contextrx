@@ -21,7 +21,11 @@ If any contradictions or omissions exist, populate the "discrepancies" array. If
 
 === OUTPUT FORMAT — STRICT JSON ===
 
-Return ONLY a valid JSON object with exactly this structure. No markdown formatting outside JSON. No conversational preamble.
+Return ONLY a valid JSON object with exactly this structure.
+CRITICAL FORMAT RULES:
+- All keys and string values MUST be enclosed in standard double quotes ("). NEVER use single quotes (').
+- Do not include markdown code block ticks, preamble, or conversational commentary outside the JSON.
+- Start directly with { and end with }.
 
 {
   "discrepancies": [
@@ -59,4 +63,5 @@ def build_user_prompt(patient_record: dict, scenario: str) -> str:
 Analyze the patient record above for this specific clinical scenario.
 1. Reconstruct all relevant clinical context needed for this decision right now.
 2. Actively detect any omissions or discrepancies between recent claims and buried historical records.
-Follow all system instructions strictly. Return valid JSON only."""
+Follow all system instructions strictly. Return valid JSON only with double quotes."""
+

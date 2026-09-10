@@ -161,26 +161,49 @@ body {
   gap: 0.45rem;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-full);
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
   font-size: 0.73rem;
   font-weight: 600;
+  color: #6b21a8;
+  transition: all var(--transition);
+}
+
+.header-status-pill.claude {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+  color: #6b21a8;
+}
+
+.header-status-pill.claude .status-pulse-dot {
+  background-color: #9333ea;
+  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.5);
+}
+
+.header-status-pill.gemini {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
   color: #166534;
+}
+
+.header-status-pill.gemini .status-pulse-dot {
+  background-color: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
 }
 
 .status-pulse-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  background-color: #9333ea;
+  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.5);
   animation: pulse-ring 2s infinite cubic-bezier(0.45, 0, 0.55, 1);
 }
 
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-  70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.6); }
+  70% { box-shadow: 0 0 0 6px rgba(147, 51, 234, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0); }
 }
 
 .header-right {
@@ -622,6 +645,58 @@ body {
 .telemetry-icon-wrap.blue { background: #e0f2fe; color: #0284c7; }
 .telemetry-icon-wrap.red { background: #fee2e2; color: #dc2626; }
 .telemetry-icon-wrap.green { background: #dcfce7; color: #16a34a; }
+.telemetry-icon-wrap.purple { background: #f3e8ff; color: #9333ea; }
+
+.telemetry-pill-micro.purple {
+  background: #faf5ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.telemetry-progress-bar.purple {
+  background: linear-gradient(90deg, #9333ea, #a855f7);
+}
+
+.telemetry-num.model-text {
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.context-model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6b21a8;
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  padding: 0.18rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.context-model-pill.gemini {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.model-dot-active {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #9333ea;
+  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.5);
+  animation: pulse-ring 2s infinite;
+}
+
+.context-model-pill.gemini .model-dot-active {
+  background-color: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+}
 
 .telemetry-label {
   font-size: 0.7rem;

@@ -1,28 +1,42 @@
 import json
 import os
 import re
-import time
+import ast
 from decimal import Decimal
 import boto3
+import botocore.config
 from google import genai
 from google.genai import types
 from prompt_templates import get_system_prompt, build_user_prompt
 
-# ── Primary: AWS Bedrock (Claude 3.5 Haiku) ──────────────────────────────────
+# ── Primary: AWS Bedrock (Anthropic Claude) ───────────────────────────────────
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", "us-east-1")
-CLAUDE_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-5-haiku-20241022-v1:0")
-CLAUDE_FALLBACK_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+# Verified ultra-fast Claude 3 Haiku first (<4s), with 3.5 Haiku profiles as alternatives
+CLAUDE_MODELS = [
+    os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0"),
+    "anthropic.claude-3-haiku-20240307-v1:0",
+    "us.anthropic.claude-3-5-haiku-20241022-v1:0",
+    "anthropic.claude-3-5-haiku-20241022-v1:0"
+]
+# Deduplicate while preserving order
+CLAUDE_MODELS = list(dict.fromkeys(CLAUDE_MODELS))
 
 try:
-    bedrock_client = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
+    bedrock_cfg = botocore.config.Config(
+        read_timeout=9,
+        connect_timeout=3,
+        retries={"max_attempts": 0}
+    )
+    bedrock_client = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION, config=bedrock_cfg)
 except Exception as e:
+    print(f"[Init] Bedrock client initialization failed: {e}")
     bedrock_client = None
 
 # ── Secondary: Google Gemini (Automated Hot Standby) ──────────────────────────
 api_key = os.environ.get("GEMINI_API_KEY", "")
 gemini_client = genai.Client(api_key=api_key) if api_key else None
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
-GEMINI_FALLBACK_MODELS = ["gemini-3.6-flash", "gemini-3.7-flash"]
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_FALLBACK_MODELS = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-3.7-flash"]
 
 # ── DynamoDB Store ────────────────────────────────────────────────────────────
 dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "ap-south-1"))
@@ -36,20 +50,65 @@ def decimal_default(obj):
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
 
+def parse_ai_json(raw_text: str) -> dict:
+    """Robustly parse JSON or Python-dict format from AI model output."""
+    if not raw_text:
+        raise ValueError("Empty response received from AI model")
+
+    cleaned = raw_text.strip()
+
+    # 1. Strip markdown fences if present
+    fence_match = re.search(r'```(?:json)?\s*\n?(.*?)\n?```', cleaned, re.DOTALL)
+    if fence_match:
+        cleaned = fence_match.group(1).strip()
+
+    # 2. Locate outermost curly braces { ... }
+    brace_start = cleaned.find('{')
+    brace_end = cleaned.rfind('}')
+    if brace_start != -1 and brace_end != -1 and brace_end > brace_start:
+        cleaned = cleaned[brace_start:brace_end + 1]
+
+    # Attempt A: Standard JSON parsing
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    # Attempt B: Python literal evaluation (converts single quotes, true/false/null)
+    try:
+        py_text = re.sub(r'\btrue\b', 'True', cleaned)
+        py_text = re.sub(r'\bfalse\b', 'False', py_text)
+        py_text = re.sub(r'\bnull\b', 'None', py_text)
+        parsed = ast.literal_eval(py_text)
+        if isinstance(parsed, dict):
+            return parsed
+    except Exception:
+        pass
+
+    # Attempt C: Regex single-to-double quote substitution
+    try:
+        fixed = re.sub(r"(?<!\\)'", '"', cleaned)
+        return json.loads(fixed)
+    except Exception:
+        pass
+
+    # Re-raise standard JSONDecodeError so caller gets exact context
+    return json.loads(cleaned)
+
+
 def invoke_claude_bedrock(user_prompt: str):
     """Invokes Anthropic Claude on AWS Bedrock."""
     if not bedrock_client:
         raise RuntimeError("Bedrock client not initialized")
 
-    models = [CLAUDE_MODEL_ID, CLAUDE_FALLBACK_ID]
     last_err = None
 
-    for model_id in models:
+    for model_id in CLAUDE_MODELS:
         try:
             body = json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 1500,
-                "temperature": 0.1,
+                "max_tokens": 2048,
+                "temperature": 0.0,
                 "system": get_system_prompt(),
                 "messages": [
                     {"role": "user", "content": user_prompt}
@@ -63,10 +122,15 @@ def invoke_claude_bedrock(user_prompt: str):
 
             response_body = json.loads(response["body"].read())
             raw_text = response_body["content"][0]["text"]
-            return raw_text, f"Claude ({model_id.split('.')[1].split('-')[1]})"
+
+            if "claude-3-5" in model_id:
+                provider_name = "Anthropic Claude 3.5 Haiku (Bedrock)"
+            else:
+                provider_name = "Anthropic Claude 3 Haiku (Bedrock)"
+            return raw_text, provider_name
         except Exception as e:
             last_err = e
-            print(f"[Bedrock] {model_id} failed: {e}")
+            print(f"[Bedrock] Model {model_id} failed: {e}")
 
     raise last_err
 
@@ -76,36 +140,33 @@ def invoke_gemini_fallback(user_prompt: str):
     if not gemini_client:
         raise RuntimeError("Gemini client not initialized")
 
-    models_to_try = [GEMINI_MODEL] + GEMINI_FALLBACK_MODELS
+    models_to_try = [GEMINI_MODEL] + [m for m in GEMINI_FALLBACK_MODELS if m != GEMINI_MODEL]
     last_error = None
 
     for model_name in models_to_try:
-        for retry in range(2):
-            try:
-                resp = gemini_client.models.generate_content(
-                    model=model_name,
-                    contents=user_prompt,
-                    config=types.GenerateContentConfig(
-                        system_instruction=get_system_prompt(),
-                        temperature=0.1,
-                        response_mime_type="application/json"
-                    )
+        try:
+            resp = gemini_client.models.generate_content(
+                model=model_name,
+                contents=user_prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=get_system_prompt(),
+                    temperature=0.0,
+                    response_mime_type="application/json"
                 )
-                return resp.text.strip(), f"Gemini ({model_name})"
-            except Exception as e:
-                last_error = e
-                err_str = str(e)
-                if "503" in err_str or "UNAVAILABLE" in err_str:
-                    time.sleep(2 * (retry + 1))
-                else:
-                    break
+            )
+            return resp.text.strip(), f"Google Gemini ({model_name})"
+        except Exception as e:
+            last_error = e
+            print(f"[Gemini Fallback] Model {model_name} failed: {e}")
+            continue
+
     raise last_error
 
 
 def lambda_handler(event, context):
     """
     POST /context-query
-    Multi-Provider Architecture: Claude 3.5 Haiku (Primary) -> Gemini 3.5 Flash (Failover)
+    Multi-Provider Architecture: Claude 3 Haiku (Primary) -> Gemini Flash (Standby)
     """
     try:
         # Handle CORS preflight OPTIONS request
@@ -155,12 +216,8 @@ def lambda_handler(event, context):
             except Exception as gemini_err:
                 raise RuntimeError(f"Both Bedrock and Gemini failed. Bedrock: {bedrock_err} | Gemini: {gemini_err}")
 
-        # Parse AI JSON response
-        fence_match = re.search(r'```(?:json)?\s*\n?(.*?)\n?```', raw_text, re.DOTALL)
-        if fence_match:
-            raw_text = fence_match.group(1).strip()
-
-        context_result = json.loads(raw_text)
+        # Resilient AI JSON parsing
+        context_result = parse_ai_json(raw_text)
 
         if isinstance(context_result, list):
             context_result = {"relevant_context": context_result, "excluded_summary": "", "discrepancies": []}
@@ -207,8 +264,8 @@ def lambda_handler(event, context):
             "cognitive_metrics": cognitive_metrics
         })
 
-    except json.JSONDecodeError as e:
-        return _response(502, {"error": "AI response was not valid JSON. Please retry.", "detail": str(e)})
+    except (json.JSONDecodeError, ValueError) as e:
+        return _response(502, {"error": "AI response formatting error. Please retry.", "detail": str(e)})
     except Exception as e:
         import traceback
         traceback.print_exc()

@@ -356,6 +356,39 @@ export default function ContextOutput({ result, isLoading, error, onSelectSource
             Based on 200 WPM · Zero hallucination check
           </div>
         </div>
+
+        <div className="telemetry-divider" />
+
+        {/* Metric 4: Active AI Inference Engine */}
+        <div className="telemetry-card">
+          <div className="telemetry-card-top">
+            <div className={`telemetry-icon-wrap ${metrics.provider_used?.toLowerCase().includes("gemini") ? "green" : "purple"}`}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <span className="telemetry-label">Active Inference Engine</span>
+          </div>
+          <div className="telemetry-val-row">
+            <span className="telemetry-num model-text" title={metrics.provider_used || "Claude 3 Haiku (Bedrock)"}>
+              {metrics.provider_used ? metrics.provider_used.split("(")[0].replace("Anthropic", "").replace("Google", "").trim() : "Claude 3"}
+            </span>
+            <span className={`telemetry-pill-micro ${metrics.provider_used?.toLowerCase().includes("gemini") ? "green" : "purple"}`}>
+              {metrics.provider_used?.toLowerCase().includes("gemini") ? "Failover" : "Bedrock Primary"}
+            </span>
+          </div>
+          <div className="telemetry-progress-track">
+            <div
+              className={`telemetry-progress-bar ${metrics.provider_used?.toLowerCase().includes("gemini") ? "green" : "purple"}`}
+              style={{ width: "100%" }}
+            />
+          </div>
+          <div className="telemetry-sub">
+            {metrics.provider_used || "Anthropic Claude 3 Haiku (AWS Bedrock us-east-1)"}
+          </div>
+        </div>
       </div>
 
       {/* Refined Discrepancy Callout (The Missing Context core showcase) */}
@@ -372,6 +405,15 @@ export default function ContextOutput({ result, isLoading, error, onSelectSource
         </div>
         <div className="context-header-meta">
           <span>Patient: <strong>{result.patient_name}</strong></span>
+          {metrics.provider_used && (
+            <span
+              className={`context-model-pill ${metrics.provider_used?.toLowerCase().includes("gemini") ? "gemini" : "claude"}`}
+              title={`Inference executed by ${metrics.provider_used}`}
+            >
+              <span className="model-dot-active" />
+              {metrics.provider_used}
+            </span>
+          )}
           <span className="context-grounding-tag">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />

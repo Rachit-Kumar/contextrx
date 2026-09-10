@@ -13,7 +13,10 @@ function Header({
   onToggleMobileRoster,
   selectedPatient,
   hasResult,
+  activeModel,
 }) {
+  const isGemini = activeModel?.toLowerCase().includes("gemini");
+
   return (
     <header className="header" role="banner">
       <div className="header-left">
@@ -54,9 +57,14 @@ function Header({
           <span className="logo-name">Context<span>Rx</span></span>
         </div>
 
-        <div className="header-status-pill">
+        <div
+          className={`header-status-pill ${isGemini ? "gemini" : "claude"}`}
+          title="ContextRx Multi-Provider Engine: Primary Anthropic Claude on AWS Bedrock (us-east-1) with Google Gemini automated hot standby"
+        >
           <span className="status-pulse-dot" />
-          <span className="status-pill-text">Gemini 3.7 Flash · Clinical EHR</span>
+          <span className="status-pill-text">
+            {activeModel ? `${activeModel} · Active` : "Claude 3 Haiku (Bedrock) · Active"}
+          </span>
         </div>
       </div>
 
@@ -116,6 +124,7 @@ export default function App() {
   const [isRecordViewerOpen, setIsRecordViewerOpen] = useState(false);
   const [isMobileRosterOpen, setIsMobileRosterOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [activeModel, setActiveModel] = useState("Claude 3 Haiku (Bedrock)");
 
   // Load patient roster on mount
   useEffect(() => {
@@ -155,6 +164,9 @@ export default function App() {
     try {
       const result = await fetchContext(selectedPatient.patient_id, scenario);
       setContextResult(result);
+      if (result?.cognitive_metrics?.provider_used) {
+        setActiveModel(result.cognitive_metrics.provider_used);
+      }
     } catch (e) {
       setQueryError(e.message || "An error occurred. Please retry.");
     } finally {
@@ -164,7 +176,9 @@ export default function App() {
 
   // 1-Click Quick Pitch Demo: Arjun Mehta + Pre-surgery prep
   function handleTriggerQuickPitch() {
-    const targetPatient = patients.find((p) => p.patient_id === "patient_001") || patients[0];
+    const targetPatient =
+      patients.find((p) => p.name?.includes("Arjun") || p.patient_id === "P001" || p.patient_id === "patient_001") ||
+      patients[0];
     if (targetPatient) {
       setSelectedPatient(targetPatient);
     }
@@ -180,6 +194,9 @@ export default function App() {
       fetchContext(targetPatient.patient_id, pitchScenario)
         .then((result) => {
           setContextResult(result);
+          if (result?.cognitive_metrics?.provider_used) {
+            setActiveModel(result.cognitive_metrics.provider_used);
+          }
           showToast("🎯 Pitch Demo Loaded: Hidden Penicillin Allergy Identified!");
         })
         .catch((e) => {
@@ -269,6 +286,7 @@ ${
         onToggleMobileRoster={() => setIsMobileRosterOpen((prev) => !prev)}
         selectedPatient={selectedPatient}
         hasResult={!!contextResult}
+        activeModel={activeModel}
       />
 
       {/* Backdrop for mobile drawer */}
@@ -290,7 +308,7 @@ ${
             </div>
             <div className="print-timestamp-box">
               <div><strong>Generated:</strong> {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</div>
-              <div><strong>Engine:</strong> Gemini 3.7 Flash Grounded EHR</div>
+              <div><strong>Engine:</strong> {activeModel || "Claude 3 Haiku (AWS Bedrock)"} · Deterministic EHR Grounding</div>
             </div>
           </div>
           <div className="print-demographics-grid">
