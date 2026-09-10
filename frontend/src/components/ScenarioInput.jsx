@@ -146,30 +146,6 @@ export default function ScenarioInput({
     <div className="scenario-section">
       <div className="scenario-header-row">
         <span className="section-label">Clinical Scenario & Intent</span>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          {selectedPatient && (
-            <span style={{ fontSize: "0.74rem", color: "var(--text-muted)" }}>
-              Selected: <strong style={{ color: "var(--text-primary)" }}>{selectedPatient.name}</strong>
-            </span>
-          )}
-          {speechSupported && (
-            <button
-              type="button"
-              className={`btn-dictate${isListening ? " listening" : ""}`}
-              onClick={toggleDictation}
-              title={isListening ? "Click to stop dictation" : "Click to speak clinical scenario (Voice Dictation)"}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                <line x1="12" y1="19" x2="12" y2="23" />
-                <line x1="8" y1="23" x2="16" y2="23" />
-              </svg>
-              <span>{isListening ? "Listening... Speak" : "Voice Dictation"}</span>
-              {isListening && <span className="listening-pulse" />}
-            </button>
-          )}
-        </div>
       </div>
 
       {!selectedPatient ? (
@@ -187,20 +163,19 @@ export default function ScenarioInput({
                 onClick={() => handlePreset(p)}
                 aria-pressed={activePreset === p.label}
               >
-                <span>{p.icon}</span>
                 <span>{p.label}</span>
               </button>
             ))}
           </div>
 
-          <div className="textarea-wrapper">
+          <div className="notched-scenario-container">
             <textarea
               id="scenario-input"
-              className={`scenario-textarea${isListening ? " dictating" : ""}`}
+              className={`scenario-textarea-notched${isListening ? " dictating" : ""}`}
               placeholder={
                 isListening
                   ? "Listening to clinician dictation... (speak clearly into your microphone)"
-                  : "Describe the clinical scenario, or click 'Voice Dictation' above to speak..."
+                  : "Describe the clinical scenario, or click the mic icon to speak..."
               }
               value={scenario}
               onChange={handleTextChange}
@@ -208,33 +183,64 @@ export default function ScenarioInput({
               rows={3}
               aria-label="Clinical scenario description"
             />
-          </div>
 
-          <div className="scenario-footer">
-            <span className="scenario-hint">
-              AI grounds findings exclusively in {selectedPatient.name}&apos;s history. Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to reconstruct.
-            </span>
-            <button
-              id="reconstruct-btn"
-              className="btn-reconstruct"
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              aria-busy={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <span className="spinner" />
-                  Synthesizing Context...
-                </>
-              ) : (
-                <>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                  Reconstruct Context
-                </>
-              )}
-            </button>
+            {/* Standard right-aligned mic icon inside text box */}
+            {speechSupported && (
+              <button
+                type="button"
+                className={`btn-mic-inside${isListening ? " listening" : ""}`}
+                onClick={toggleDictation}
+                title={isListening ? "Listening... click to stop dictation" : "Voice Dictation (click to speak)"}
+                aria-label="Voice Dictation"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="23" />
+                  <line x1="8" y1="23" x2="16" y2="23" />
+                </svg>
+                {isListening && <span className="mic-pulse-ring" />}
+              </button>
+            )}
+
+            {/* Grounding hint on bottom-left */}
+            <div className="scenario-bottom-left-hint">
+              AI grounds findings exclusively in {selectedPatient.name}&apos;s history. Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to submit.
+            </div>
+
+            {/* Bottom-right notch cutout dock with inverted curves */}
+            <div className="notch-cutout-dock">
+              {/* Inverted curve fillet top */}
+              <svg className="notch-fillet-top" viewBox="0 0 14 14" style={{ overflow: "visible" }} aria-hidden="true">
+                <path d="M 0 14 A 14 14 0 0 0 14 0 L 15 0 L 15 15 L 0 15 Z" fill="#ffffff" />
+                <path className="fillet-stroke" d="M 0 14 A 14 14 0 0 0 14 0" />
+              </svg>
+
+              {/* Inverted curve fillet left */}
+              <svg className="notch-fillet-left" viewBox="0 0 14 14" style={{ overflow: "visible" }} aria-hidden="true">
+                <path d="M 14 0 A 14 14 0 0 0 0 14 L 0 15 L 15 15 L 15 0 Z" fill="#ffffff" />
+                <path className="fillet-stroke" d="M 14 0 A 14 14 0 0 0 0 14" />
+              </svg>
+
+              {/* Royal Blue Analyze button */}
+              <button
+                id="reconstruct-btn"
+                type="button"
+                className="btn-royal-submit"
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                aria-busy={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="submit-spinner" />
+                    <span>Analyzing...</span>
+                  </>
+                ) : (
+                  <span>Analyze</span>
+                )}
+              </button>
+            </div>
           </div>
         </>
       )}

@@ -63,6 +63,12 @@ export default function FullRecordViewer({
       <div
         className="chart-header"
         onClick={() => onToggleOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onToggleOpen(!isOpen);
+          }
+        }}
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
@@ -94,6 +100,7 @@ export default function FullRecordViewer({
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
             transition: "transform 200ms ease",
             color: "var(--text-muted)",
+            pointerEvents: "none",
           }}
         >
           <polyline points="6 9 12 15 18 9" />
