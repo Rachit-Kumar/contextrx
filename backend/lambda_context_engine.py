@@ -11,19 +11,19 @@ from prompt_templates import get_system_prompt, build_user_prompt
 
 # ── Primary: AWS Bedrock (Anthropic Claude) ───────────────────────────────────
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", "us-east-1")
-# Verified ultra-fast Claude 3 Haiku first (<4s), with 3.5 Haiku profiles as alternatives
+# Claude 3 Haiku (20240307) is EOL — prioritize 3.5 Haiku and cross-region profiles
 CLAUDE_MODELS = [
-    os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0"),
-    "anthropic.claude-3-haiku-20240307-v1:0",
+    os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-5-haiku-20241022-v1:0"),
+    "anthropic.claude-3-5-haiku-20241022-v1:0",
     "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-    "anthropic.claude-3-5-haiku-20241022-v1:0"
+    "anthropic.claude-3-5-sonnet-20241022-v2:0",
 ]
 # Deduplicate while preserving order
 CLAUDE_MODELS = list(dict.fromkeys(CLAUDE_MODELS))
 
 try:
     bedrock_cfg = botocore.config.Config(
-        read_timeout=9,
+        read_timeout=12,
         connect_timeout=3,
         retries={"max_attempts": 0}
     )
@@ -36,7 +36,8 @@ except Exception as e:
 api_key = os.environ.get("GEMINI_API_KEY", "")
 gemini_client = genai.Client(api_key=api_key) if api_key else None
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
-GEMINI_FALLBACK_MODELS = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-3.7-flash"]
+# Ordered by reliability — 1.5-flash is the most stable, 2.5/3.7 as alternatives
+GEMINI_FALLBACK_MODELS = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-3.5-flash", "gemini-3.7-flash"]
 
 # ── DynamoDB Store ────────────────────────────────────────────────────────────
 dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "ap-south-1"))
