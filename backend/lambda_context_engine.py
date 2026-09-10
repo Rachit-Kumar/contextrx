@@ -9,16 +9,33 @@ from google import genai
 from google.genai import types
 from prompt_templates import get_system_prompt, build_user_prompt
 
-# ── Primary: AWS Bedrock (Anthropic Claude) ───────────────────────────────────
-BEDROCK_REGION = os.environ.get("BEDROCK_REGION", "us-east-1")
-# Model IDs verified from account's Bedrock console (Sep 2026)
-CLAUDE_MODELS = [
-    os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-haiku-4-5-20251001-v1:0"),
-    "anthropic.claude-haiku-4-5-20251001-v1:0",      # Haiku 4.5 — fastest & cheapest
-    "anthropic.claude-sonnet-4-6",                     # Sonnet 4.6 — balanced
-    "anthropic.claude-sonnet-4-5-20250929-v1:0",       # Sonnet 4.5 — fallback
+# ── Multi-Provider AI Architecture ──────────────────────────────────────────
+# Default: Google Gemini 3.6 Flash as primary reasoning engine
+PRIMARY_PROVIDER = os.environ.get("PRIMARY_PROVIDER", "gemini").lower()
+
+# ── Primary Provider: Google Gemini ───────────────────────────────────────────
+api_key = os.environ.get("GEMINI_API_KEY", "")
+gemini_client = genai.Client(api_key=api_key) if api_key else None
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+# Active 2026 Gemini models for instant failover (tested & verified working)
+GEMINI_FALLBACK_MODELS = [
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-flash-latest",
+    "gemini-3.7-flash",
+    "gemini-3.8-flash"
 ]
-# Deduplicate while preserving order
+
+# ── Secondary Provider: AWS Bedrock (Anthropic Claude) ────────────────────────
+BEDROCK_REGION = os.environ.get("BEDROCK_REGION", "us-east-1")
+# Note: Newer Bedrock Claude models require cross-region inference profiles ('us.' prefix)
+CLAUDE_MODELS = [
+    os.environ.get("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0"),
+    "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    "us.anthropic.claude-sonnet-4-6",
+    "us.anthropic.claude-3-5-haiku-20241022-v1:0",
+    "anthropic.claude-haiku-4-5-20251001-v1:0",
+]
 CLAUDE_MODELS = list(dict.fromkeys(CLAUDE_MODELS))
 
 try:
@@ -31,13 +48,6 @@ try:
 except Exception as e:
     print(f"[Init] Bedrock client initialization failed: {e}")
     bedrock_client = None
-
-# ── Secondary: Google Gemini (Automated Hot Standby) ──────────────────────────
-api_key = os.environ.get("GEMINI_API_KEY", "")
-gemini_client = genai.Client(api_key=api_key) if api_key else None
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
-# Ordered by reliability — 1.5-flash is the most stable, 2.5/3.7 as alternatives
-GEMINI_FALLBACK_MODELS = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-3.5-flash", "gemini-3.7-flash"]
 
 # ── DynamoDB Store ────────────────────────────────────────────────────────────
 dynamodb = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "ap-south-1"))
@@ -140,10 +150,10 @@ def invoke_claude_bedrock(user_prompt: str):
     raise last_err
 
 
-def invoke_gemini_fallback(user_prompt: str):
-    """Hot failover: Invokes Google Gemini if Bedrock is unavailable."""
+def invoke_gemini(user_prompt: str):
+    """Invokes Google Gemini with smart model fallback across verified 2026 models."""
     if not gemini_client:
-        raise RuntimeError("Gemini client not initialized")
+        raise RuntimeError("Gemini client not initialized (GEMINI_API_KEY missing)")
 
     models_to_try = [GEMINI_MODEL] + [m for m in GEMINI_FALLBACK_MODELS if m != GEMINI_MODEL]
     last_error = None
@@ -159,19 +169,34 @@ def invoke_gemini_fallback(user_prompt: str):
                     response_mime_type="application/json"
                 )
             )
-            return resp.text.strip(), f"Google Gemini ({model_name})"
+            if "3.6" in model_name:
+                provider_name = "Google Gemini 3.6 Flash"
+            elif "3.5" in model_name:
+                provider_name = "Google Gemini 3.5 Flash"
+            elif "3.7" in model_name:
+                provider_name = "Google Gemini 3.7 Flash"
+            elif "3.8" in model_name:
+                provider_name = "Google Gemini 3.8 Flash"
+            elif "flash-latest" in model_name:
+                provider_name = "Google Gemini Flash Latest"
+            else:
+                provider_name = f"Google Gemini ({model_name})"
+            return resp.text.strip(), provider_name
         except Exception as e:
             last_error = e
-            print(f"[Gemini Fallback] Model {model_name} failed: {e}")
+            print(f"[Gemini] Model {model_name} failed: {e}")
             continue
 
     raise last_error
 
 
+invoke_gemini_fallback = invoke_gemini  # backward compatibility alias
+
+
 def lambda_handler(event, context):
     """
     POST /context-query
-    Multi-Provider Architecture: Claude 3 Haiku (Primary) -> Gemini Flash (Standby)
+    Multi-Provider Architecture: Google Gemini 3.6 Flash (Primary) -> AWS Bedrock Claude (Standby)
     """
     try:
         # Handle CORS preflight OPTIONS request
@@ -204,22 +229,34 @@ def lambda_handler(event, context):
 
         user_prompt = build_user_prompt(patient_clean, scenario)
 
+        # ── Model Invocation: Primary Engine with Resilient Hot Standby ────────
         raw_text = None
         active_provider = None
 
-        # ── 1st Choice: AWS Bedrock Claude ────────────────────────────────────
-        try:
-            print("[ContextEngine] Attempting primary reasoning with AWS Bedrock Claude...")
-            raw_text, active_provider = invoke_claude_bedrock(user_prompt)
-            print(f"[ContextEngine] Success with {active_provider}")
-        except Exception as bedrock_err:
-            print(f"[ContextEngine] Bedrock unavailable ({bedrock_err}), failing over to Gemini...")
-            # ── 2nd Choice: Automated Hot Failover to Google Gemini ────────────
+        if PRIMARY_PROVIDER == "gemini":
             try:
-                raw_text, active_provider = invoke_gemini_fallback(user_prompt)
-                print(f"[ContextEngine] Failover successful with {active_provider}")
+                print(f"[ContextEngine] Invoking primary model: Google Gemini ({GEMINI_MODEL})...")
+                raw_text, active_provider = invoke_gemini(user_prompt)
+                print(f"[ContextEngine] Primary success with {active_provider}")
             except Exception as gemini_err:
-                raise RuntimeError(f"Both Bedrock and Gemini failed. Bedrock: {bedrock_err} | Gemini: {gemini_err}")
+                print(f"[ContextEngine] Gemini unavailable ({gemini_err}), failing over to AWS Bedrock Claude...")
+                try:
+                    raw_text, active_provider = invoke_claude_bedrock(user_prompt)
+                    print(f"[ContextEngine] Bedrock failover successful with {active_provider}")
+                except Exception as bedrock_err:
+                    raise RuntimeError(f"Both Gemini and Bedrock failed. Gemini: {gemini_err} | Bedrock: {bedrock_err}")
+        else:
+            try:
+                print("[ContextEngine] Invoking primary model: AWS Bedrock Claude...")
+                raw_text, active_provider = invoke_claude_bedrock(user_prompt)
+                print(f"[ContextEngine] Bedrock success with {active_provider}")
+            except Exception as bedrock_err:
+                print(f"[ContextEngine] Bedrock unavailable ({bedrock_err}), failing over to Google Gemini...")
+                try:
+                    raw_text, active_provider = invoke_gemini(user_prompt)
+                    print(f"[ContextEngine] Gemini failover successful with {active_provider}")
+                except Exception as gemini_err:
+                    raise RuntimeError(f"Both Bedrock and Gemini failed. Bedrock: {bedrock_err} | Gemini: {gemini_err}")
 
         # Resilient AI JSON parsing
         context_result = parse_ai_json(raw_text)

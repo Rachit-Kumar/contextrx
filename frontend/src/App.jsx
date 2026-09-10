@@ -59,11 +59,11 @@ function Header({
 
         <div
           className={`header-status-pill ${isGemini ? "gemini" : "claude"}`}
-          title="ContextRx Multi-Provider Engine: Primary Anthropic Claude on AWS Bedrock (us-east-1) with Google Gemini automated hot standby"
+          title="ContextRx Multi-Provider Engine: Google Gemini 3.6 Flash (Primary) with AWS Bedrock Claude Hot Standby"
         >
           <span className="status-pulse-dot" />
           <span className="status-pill-text">
-            {activeModel ? `${activeModel} · Active` : "Claude 3 Haiku (Bedrock) · Active"}
+            {activeModel ? `${activeModel} · Active` : "Google Gemini 3.6 Flash · Active"}
           </span>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function App() {
   const [isRecordViewerOpen, setIsRecordViewerOpen] = useState(false);
   const [isMobileRosterOpen, setIsMobileRosterOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
-  const [activeModel, setActiveModel] = useState("Claude Haiku 4.5 (Bedrock)");
+  const [activeModel, setActiveModel] = useState("Google Gemini 3.6 Flash");
 
   // Load patient roster on mount
   useEffect(() => {
@@ -308,7 +308,7 @@ ${
             </div>
             <div className="print-timestamp-box">
               <div><strong>Generated:</strong> {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</div>
-              <div><strong>Engine:</strong> {activeModel || "Claude 3 Haiku (AWS Bedrock)"} · Deterministic EHR Grounding</div>
+              <div><strong>Engine:</strong> {activeModel || "Google Gemini 3.6 Flash"} · Deterministic EHR Grounding</div>
             </div>
           </div>
           <div className="print-demographics-grid">
