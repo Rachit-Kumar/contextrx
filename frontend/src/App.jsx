@@ -124,7 +124,7 @@ export default function App() {
   const [isRecordViewerOpen, setIsRecordViewerOpen] = useState(false);
   const [isMobileRosterOpen, setIsMobileRosterOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
-  const [activeModel, setActiveModel] = useState("Claude 3 Haiku (Bedrock)");
+  const [activeModel, setActiveModel] = useState("Claude Haiku 4.5 (Bedrock)");
 
   // Load patient roster on mount
   useEffect(() => {

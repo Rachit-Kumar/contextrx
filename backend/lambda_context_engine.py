@@ -11,12 +11,12 @@ from prompt_templates import get_system_prompt, build_user_prompt
 
 # ── Primary: AWS Bedrock (Anthropic Claude) ───────────────────────────────────
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", "us-east-1")
-# Claude 3 Haiku (20240307) is EOL — prioritize 3.5 Haiku and cross-region profiles
+# Model IDs verified from account's Bedrock console (Sep 2026)
 CLAUDE_MODELS = [
-    os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-5-haiku-20241022-v1:0"),
-    "anthropic.claude-3-5-haiku-20241022-v1:0",
-    "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-    "anthropic.claude-3-5-sonnet-20241022-v2:0",
+    os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-haiku-4-5-20251001-v1:0"),
+    "anthropic.claude-haiku-4-5-20251001-v1:0",      # Haiku 4.5 — fastest & cheapest
+    "anthropic.claude-sonnet-4-6",                     # Sonnet 4.6 — balanced
+    "anthropic.claude-sonnet-4-5-20250929-v1:0",       # Sonnet 4.5 — fallback
 ]
 # Deduplicate while preserving order
 CLAUDE_MODELS = list(dict.fromkeys(CLAUDE_MODELS))
@@ -124,10 +124,14 @@ def invoke_claude_bedrock(user_prompt: str):
             response_body = json.loads(response["body"].read())
             raw_text = response_body["content"][0]["text"]
 
-            if "claude-3-5" in model_id:
-                provider_name = "Anthropic Claude 3.5 Haiku (Bedrock)"
+            if "haiku-4-5" in model_id:
+                provider_name = "Claude Haiku 4.5 (Bedrock)"
+            elif "sonnet-4-6" in model_id:
+                provider_name = "Claude Sonnet 4.6 (Bedrock)"
+            elif "sonnet-4-5" in model_id:
+                provider_name = "Claude Sonnet 4.5 (Bedrock)"
             else:
-                provider_name = "Anthropic Claude 3 Haiku (Bedrock)"
+                provider_name = f"Claude ({model_id.split('.')[1].split('-')[0].title()}) (Bedrock)"
             return raw_text, provider_name
         except Exception as e:
             last_err = e
